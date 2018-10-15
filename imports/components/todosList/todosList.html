@@ -1,0 +1,113 @@
+<header>
+    <h2>Agregar nuevo paciente</h2>
+
+    <label class="hide-completed">
+        <input type="checkbox" ng-model="$ctrl.hideCompleted"/>
+        Ocultar pacientes atendidos
+    </label>
+
+    <form>
+        <fieldset>
+            <div class="form-group">
+                <label for="nombre">Nombre</label>
+                <input type="text" class="form-control" id="nombre" ng-model="$ctrl.newTask.name">
+            </div>
+            <div class="form-group">
+                <label for="edad">Edad</label>
+                <input class="form-control" id="edad" ng-model="$ctrl.newTask.age" type="number" min="0" max="100">
+            </div>
+            <div class="form-group">
+                <label for="edad">Peso/Estatura</label>
+                <input class="form-control" id="p&e" ng-model="$ctrl.newTask.relation" type="number" min="1" max="4">
+            </div>
+            <div class="form-group">
+                <label for="fumador">Fumador</label>
+                <select class="form-control" name="smoker" ng-model="$ctrl.newTask.smoker">
+                    <option value="true">Si</option>
+                    <option value="false">No</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="annios">Años de Fumador</label>
+                <input class="form-control" id="annios" ng-model="$ctrl.newTask.ageSmoker" type="number" min="0" max="100">
+            </div>
+            <div class="form-group">
+                <label for="dieta">Dieta</label>
+                <select class="form-control" name="diet" ng-model="$ctrl.newTask.diet">
+                    <option value="true">Si</option>
+                    <option value="false">No</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" ng-click="$ctrl.addTask($ctrl.newTask)">Agendar</button>
+        </fieldset>
+    </form>
+
+</header>
+
+<div class="row">
+    <div class="col-xs-12 col-md-12">
+        <h2>Lista de pacientes con mayor por prioridad ({{$ctrl.incompleteCount}})</h2>
+
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th scope="col"></th>
+                <th scope="col">Atender</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Edad</th>
+                <th scope="col">Nº de Historia</th>
+                <th scope="col">Especialidad</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr li ng-repeat="task in $ctrl.tasks" ng-class="{'checked': task.checked}">
+                <td><button class="delete btn btn-danger" ng-click="$ctrl.removeTask(task)">Borrar</button></td>
+                <td><input type="checkbox" ng-checked="task.checked" ng-click="$ctrl.setChecked(task)" class="toggle-checked"/></td>
+                <td>{{task.name}}</td>
+                <td>{{task.age}}</td>
+                <td>{{task.numHistory}}</td>
+                <td>{{task.query}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="col-xs-12 col-md-12">
+        <h2>Lista de pacientes fumadores urgentes</h2>
+
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">Edad</th>
+                <th scope="col">Prioridad</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr li ng-repeat="task in $ctrl.tasks">
+                <td ng-if="task.smoker && task.priority > 4">{{task.name}}</td>
+                <td ng-if="task.smoker && task.priority > 4">{{task.age}}</td>
+                <td ng-if="task.smoker && task.priority > 4">{{task.priority}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="col-xs-12 col-md-12">
+        <h2>Lista de pacientes mayor riesgo</h2>
+
+        <label>Buscar: <input ng-model="searchText"></label>
+        <table id="searchTextResults" class="table table-hover">
+            <tr>
+                <th>Nº de Historia</th>
+                <th>Nombre</th>
+                <th>Prioridad</th>
+            </tr>
+            <tr ng-repeat="task in $ctrl.tasks | filter:searchText">
+                <td>{{task.numHistory}}</td>
+                <td>{{task.name}}</td>
+                <td>{{task.priority}}</td>
+            </tr>
+        </table>
+    </div>
+</div>
