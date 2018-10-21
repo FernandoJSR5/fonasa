@@ -1,7 +1,7 @@
 import angular from 'angular';
 import angularMeteor from 'angular-meteor';
 import { Tasks } from '../../api/tasks.js';
-import { Queries} from "../../api/queries";
+import { Queries } from "../../api/queries";
 import template from './todosList.html';
 
 class TodosListCtrl {
@@ -29,6 +29,14 @@ class TodosListCtrl {
                         $ne: true
                     }
                 }).count();
+            },
+            queries() {
+                const selectorQueries = {};
+                return Queries.find(selectorQueries, {
+                    sort: {
+                        cantPatients: -1
+                    }
+                });
             }
         })
     }
@@ -132,6 +140,12 @@ class TodosListCtrl {
             this.newTask.age = 0;
             this.newTask.diet = '';
         }
+        let query = Queries.findOne({query: newTask.query})
+        Queries.update(query._id, {
+            $set: {
+                cantPatients: query.cantPatients + 1
+            },
+        });
     }
 
     setChecked(task) {
@@ -141,10 +155,27 @@ class TodosListCtrl {
                 checked: !task.checked
             },
         });
+        let query = Queries.findOne({query: task.query})
+        query.state = task.checked ? 'Ocupada' : 'Desocupada'
+        Queries.update(query._id, {
+            $set: {
+                state: query.state
+            },
+        });
     }
 
     removeTask(task) {
         Tasks.remove(task._id);
+    }
+
+    updateQuery(query) {
+        let cantPatients = query.cantPatients == 0 ? 0 : 1
+        Queries.update(query._id, {
+            $set: {
+                cantPatients: query.cantPatients - cantPatients,
+                state: 'Desocupada'
+            }
+        });
     }
 }
 
